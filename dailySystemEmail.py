@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from datetime import datetime
 import pandas as pd
 
+from bs4 import BeautifulSoup
+
 load_dotenv()
 
 sender_email = os.getenv('SENDER_EMAIL')
@@ -22,19 +24,23 @@ receiver_email = ["cooper@cooperparlee.com","cparlee9@gmail.com"]
 def dailyEmail():
     date_string = datetime.now().strftime("%d %b %Y")
     subject = date_string + ": Daily System Status Update"
-    body = """
-    <html>
-    <head></head>
-    <body>
-        <h2>System Stats Report</h2>
-        <p><b>CPU Usage:</b> 45%</p>
-        <p><b>Memory Usage:</b> 68%</p>
-        <p><b>Disk Space:</b> 72% used</p>
-        <hr>
-        <p style="color: gray; font-size: small;">Generated automatically by the monitoring script.</p>
-    </body>
-    </html>
-    """
+
+    with open("message.html", 'r') as file:
+        soup = BeautifulSoup(file, 'html.parser')
+
+    # parse some shit
+
+    date_string_lab = soup.find('span', {'id': 'date_string'})
+    if date_string_lab:
+        date_string_lab.string = date_string
+
+    sys_name_lab = soup.find('span', {'id': 'system_name'})
+    if sys_name_lab:
+        sys_name_lab.string = os.getenv('SYSTEM_NAME')
+
+    # parse it with cool graphs now
+
+    body = str(soup)
 
     msg = MIMEMultipart()
     msg['From'] = sender_email
