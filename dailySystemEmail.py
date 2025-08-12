@@ -3,7 +3,7 @@ import time
 import psutil
 import os
 from dotenv import load_dotenv
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 
 from bs4 import BeautifulSoup
@@ -19,10 +19,14 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+CSV_DIR = "usage_logs"
+
 receiver_email = ["cooper@cooperparlee.com","cparlee9@gmail.com"]
 
 def dailyEmail():
-    date_string = datetime.now().strftime("%d %b %Y")
+    date = datetime.now() - timedelta(days=1)
+
+    date_string = date.strftime("%d %b %Y")
     subject = date_string + ": Daily System Status Update"
 
     with open("message.html", 'r') as file:
@@ -48,6 +52,35 @@ def dailyEmail():
                 res_warn.append(warn_soup)
 
     # parse it with cool graphs now
+
+    csv_path = os.path.join(CSV_DIR, f"{date.strftime("%Y-%m-%d")}.csv")
+
+    try:
+        csv = pd.read_csv(csv_path)
+
+        # Read from the CSV file
+
+        timestamps = csv["timestamp [HR:Mn]"].tolist()
+        cpus = csv["cpu usage [%]"].to_list()
+
+        memory_used = csv["memory used [GB]"].to_list()
+        memory_total = csv["memory avail [GB]"].to_list()
+
+        disk_used = csv["disk used [GB]"].to_list()
+        disk_total = csv["disk avail [GB]"].to_list()
+        
+        
+
+
+
+
+
+
+
+    except Exception as e:
+        print(f"Error reading CSV file: {e}")
+
+    # Compose an email message to send
 
     body = str(soup)
 
