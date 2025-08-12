@@ -36,7 +36,16 @@ def dailyEmail():
 
     sys_name_lab = soup.find('span', {'id': 'system_name'})
     if sys_name_lab:
-        sys_name_lab.string = os.getenv('SYSTEM_NAME')
+        sys_name = os.getenv('SYSTEM_NAME')
+        sys_name_lab.string = sys_name
+
+    high_resource = False
+    if high_resource:
+        res_warn = soup.find('span', {'id': 'warning'})
+        if res_warn:
+            with open('./elements/warning.html', 'r') as warn_file:
+                warn_soup = BeautifulSoup(warn_file, "html.parser")
+                res_warn.append(warn_soup)
 
     # parse it with cool graphs now
 
