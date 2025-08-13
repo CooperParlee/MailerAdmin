@@ -1,3 +1,5 @@
+import base64
+from email.mime.image import MIMEImage
 import schedule
 import time
 import psutil
@@ -5,6 +7,8 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import pandas as pd
+
+from generatePlot import generatePlot, generateBase64
 
 from bs4 import BeautifulSoup
 
@@ -23,10 +27,13 @@ CSV_DIR = "usage_logs"
 
 receiver_email = ["cooper@cooperparlee.com","cparlee9@gmail.com"]
 
+def toHTML(string):
+    return BeautifulSoup(string, "html.parser")
+
 def dailyEmail():
     date = datetime.now() - timedelta(days=1)
 
-    date_string = date.strftime("%d %b %Y")
+    date_string = datetime.now().strftime("%d %b %Y")
     subject = date_string + ": Daily System Status Update"
 
     with open("message.html", 'r') as file:
@@ -69,26 +76,58 @@ def dailyEmail():
         disk_used = csv["disk used [GB]"].to_list()
         disk_total = csv["disk avail [GB]"].to_list()
         
-        
+        cpu_plot = generatePlot("Server CPU Usage", ["Timestamp [EST]", "CPU Usage [%]"], [timestamps, cpus], "blue", "Blues")
+        mem_plot = generatePlot("Server Memory Usage", ["Timestamp [EST]", "Memory Used [GB]"], [timestamps, memory_used, memory_total], "green", "Greens")
+        disk_plot = generatePlot("Server Disk Usage", ["Timestamp [EST]", "Disk Usage [GB]"], [timestamps, disk_used, disk_total], "orange", "Oranges")
 
-
-
-
-
-
+        img_cpu = generateBase64(cpu_plot)
+        img_mem = generateBase64(mem_plot)
+        img_disk = generateBase64(disk_plot)
 
     except Exception as e:
         print(f"Error reading CSV file: {e}")
 
     # Compose an email message to send
 
+    cpu_loc = soup.find('div', {'id': 'CPU_graph'})
+    if cpu_loc:
+        cpu_loc.append(toHTML(f"<img src='cid:plot1' alt='Graph' />"))
+    mem_loc = soup.find('div', {'id': 'Mem_graph'})
+    if mem_loc:
+        mem_loc.append(toHTML(f"<img src='cid:plot2' alt='Graph' />"))
+    disk_loc = soup.find('div', {'id': 'Disk_graph'})
+    if disk_loc:
+        disk_loc.append(toHTML(f"<img src='cid:plot3' alt='Graph' />"))
+
+
     body = str(soup)
 
-    msg = MIMEMultipart()
+    msg = MIMEMultipart("related")
     msg['From'] = sender_email
     msg['To'] = ", ".join(receiver_email)
     msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'html')) # or 'html' for HTML content
+
+    msg_alt = MIMEMultipart("alternative")
+    msg.attach(msg_alt)
+    msg_alt.attach(MIMEText(body, 'html'))
+
+    # Attach the generated PNG files as MIMEs
+    
+    mime_cpu = MIMEImage(base64.b64decode(img_cpu), _subtype="png")
+    mime_cpu.add_header("Content-ID", "<plot1>")
+    mime_cpu.add_header("Content-Disposition", "inline", filename="plot1.png")
+
+    mime_mem = MIMEImage(base64.b64decode(img_mem), _subtype="png")
+    mime_mem.add_header("Content-ID", "<plot2>")
+    mime_mem.add_header("Content-Disposition", "inline", filename="plot2.png")
+
+    mime_disk = MIMEImage(base64.b64decode(img_disk), _subtype="png")
+    mime_disk.add_header("Content-ID", "<plot3>")
+    mime_disk.add_header("Content-Disposition", "inline", filename="plot3.png")
+
+    msg.attach(mime_cpu)
+    msg.attach(mime_mem)
+    msg.attach(mime_disk)
 
     try:
         with smtplib.SMTP(smtp_server, smtp_port) as server:

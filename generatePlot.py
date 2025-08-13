@@ -40,22 +40,26 @@ def generatePlot(name, axes_labels, data, color_line, color_grad):
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
     fig.autofmt_xdate()
 
+    if len(data) > 2:
+        y2 = data[2]
+        ax.plot(date_obj, y2, color=color_line)
+
     return fig
 
 def generateBase64 (fig):
     buffer = io.BytesIO()
-    fig.safefig(buffer, format='png', bbox_inches='tight')
+    fig.savefig(buffer, format='png', bbox_inches='tight')
     buffer.seek(0)
 
-    img_64 = base64.b64encode(buffer.read()).decode('utf-8')
-    plt.close()
+    img_64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+    plt.close(fig)
 
     return img_64
 
-csv = pd.read_csv('./usage_logs/2025-08-12.csv')
+# csv = pd.read_csv('./usage_logs/2025-08-11.csv')
 
-timestamps = csv["timestamp [HR:Mn]"].tolist()
-cpus = csv["cpu usage [%]"].to_list()
+# timestamps = csv["timestamp [HR:Mn]"].tolist()
+# cpus = csv["cpu usage [%]"].to_list()
 
-generatePlot("cpu usage", ["timestamp [EST]", "CPU Usage [%]"], [timestamps, cpus], "green", "Greens")
+# generatePlot("cpu usage", ["timestamp [EST]", "CPU Usage [%]"], [timestamps, cpus], "green", "Greens")
 
