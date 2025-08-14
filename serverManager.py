@@ -8,7 +8,7 @@ print("Starting Server Manager...")
 
 def main():
     schedule.every().minute.do(csvUpdateWrapper)
-    schedule.every().day.do(dailyEmail)
+    schedule.every().day.at("05:30").do(dailyEmail)
 
     while(True):
         schedule.run_pending()
