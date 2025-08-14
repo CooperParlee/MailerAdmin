@@ -1,5 +1,3 @@
-import schedule
-import time
 import psutil
 import os
 from dotenv import load_dotenv
@@ -63,12 +61,3 @@ def write_stats_to_csv(stats):
 
 def csvUpdateWrapper():
     return write_stats_to_csv(checkStats())
-
-def main():
-    schedule.every().minute.do(csvUpdateWrapper)
-
-    while(True):
-        schedule.run_pending()
-        time.sleep(20)
-        
-main()

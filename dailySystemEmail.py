@@ -138,4 +138,3 @@ def dailyEmail():
     except Exception as e:
         print(f"Error sending email: {e}")
 
-dailyEmail()

@@ -1,14 +1,10 @@
 import matplotlib.pyplot as plt
-from matplotlib.collections import PolyCollection
 import matplotlib.cm as cm
 import numpy as np
-import datetime as dt
 import matplotlib.dates as mdates
 from datetime import datetime
 import io
 import base64
-
-import pandas as pd
 
 def generatePlot(name, axes_labels, data, color_line, color_grad):
     x = data[0]
@@ -55,11 +51,3 @@ def generateBase64 (fig):
     plt.close(fig)
 
     return img_64
-
-# csv = pd.read_csv('./usage_logs/2025-08-11.csv')
-
-# timestamps = csv["timestamp [HR:Mn]"].tolist()
-# cpus = csv["cpu usage [%]"].to_list()
-
-# generatePlot("cpu usage", ["timestamp [EST]", "CPU Usage [%]"], [timestamps, cpus], "green", "Greens")
-
