@@ -47,10 +47,10 @@ def write_stats_to_csv(stats):
         "timestamp [HR:Mn]": datetime.now().strftime("%H:%M"),
         
         "cpu usage [%]": stats["cpu_percent"],
-        "memory used [MB]": f"{stats["memory_used"]:.2f}",
-        "memory avail [MB]": f"{stats["memory_avail"]:.2f}",
-        "disk used [GB]": f"{stats["disk_used"]:.2f}",
-        "disk avail [GB]": f"{stats["disk_avail"]:.2f}"
+        "memory used [MB]": f"{stats['memory_used']:.2f}",
+        "memory avail [MB]": f"{stats['memory_avail']:.2f}",
+        "disk used [GB]": f"{stats['disk_used']:.2f}",
+        "disk avail [GB]": f"{stats['disk_avail']:.2f}"
     }])
 
     if not os.path.isfile(path):

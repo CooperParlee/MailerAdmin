@@ -67,14 +67,14 @@ def dailyEmail():
 
         # Read from the CSV file
 
-        timestamps = csv["timestamp [HR:Mn]"].tolist()
-        cpus = csv["cpu usage [%]"].to_list()
+        timestamps = csv['timestamp [HR:Mn]'].tolist()
+        cpus = csv['cpu usage [%]'].to_list()
 
-        memory_used = csv["memory used [MB]"].to_list()
-        memory_total = csv["memory avail [MB]"].to_list()
+        memory_used = csv['memory used [MB]'].to_list()
+        memory_total = csv['memory avail [MB]'].to_list()
 
-        disk_used = csv["disk used [GB]"].to_list()
-        disk_total = csv["disk avail [GB]"].to_list()
+        disk_used = csv['disk used [GB]'].to_list()
+        disk_total = csv['disk avail [GB]'].to_list()
         
         cpu_plot = generatePlot("Server CPU Usage", ["Timestamp [EST]", "CPU Usage [%]"], [timestamps, cpus], "blue", "Blues")
         mem_plot = generatePlot("Server Memory Usage", ["Timestamp [EST]", "Memory Used [MB]"], [timestamps, memory_used, memory_total], "green", "Greens")
