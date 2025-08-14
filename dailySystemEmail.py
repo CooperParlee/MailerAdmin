@@ -60,7 +60,7 @@ def dailyEmail():
 
     # parse it with cool graphs now
 
-    csv_path = os.path.join(CSV_DIR, f"{date.strftime("%Y-%m-%d")}.csv")
+    csv_path = os.path.join(CSV_DIR, f"{date.strftime('%Y-%m-%d')}.csv")
 
     try:
         csv = pd.read_csv(csv_path)

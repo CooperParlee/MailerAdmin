@@ -18,7 +18,7 @@ def generatePlot(name, axes_labels, data, color_line, color_grad):
     plt.ylabel(axes_labels[1])
 
     base_date = "2025-01-01"
-    date_obj = [datetime.strptime(f"{base_date} {t}", "%Y-%m-%d %H:%M") for t in x]
+    date_obj = [datetime.strptime(f"{base_date} {t}", '%Y-%m-%d %H:%M') for t in x]
     x_dates = mdates.date2num(date_obj)
     #Generate Gradient Underneath
     
